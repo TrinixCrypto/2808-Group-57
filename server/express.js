@@ -40,7 +40,7 @@ app.use(helmet())
 app.use(cors())
 
 app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
-
+app.get('/health', (_req, res) => {res.status(200).send('OK');});
 // mount routes
 app.use('/', userRoutes)
 app.use('/', authRoutes)
