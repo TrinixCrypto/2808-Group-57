@@ -9,6 +9,7 @@ import Template from '../template'
 import userRoutes from './routes/user.routes'
 import authRoutes from './routes/auth.routes'
 import postRoutes from './routes/post.routes'
+import mongoose from 'mongoose'
 
 // modules for server side rendering
 import React from 'react'
@@ -40,11 +41,42 @@ app.use(helmet())
 app.use(cors())
 
 app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
-app.get('/health', (_req, res) => {res.status(200).send('OK');});
+
+app.get('/api/health', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  })
+})
+
+app.get('/api/readiness', (_req, res) => {
+  let dbStatus = 'unknown'
+  switch (mongoose.connection.readyState) {
+    case 0: dbStatus = 'disconnected'; break
+    case 1: dbStatus = 'connected'; break
+    case 2: dbStatus = 'connecting'; break
+    case 3: dbStatus = 'disconnecting'; break
+  }
+
+  if (mongoose.connection.readyState === 1) {
+    res.status(200).json({
+      status: 'ready',
+      database: dbStatus,
+      timestamp: new Date().toISOString()
+    })
+  } else {
+    res.status(503).json({
+      status: 'not ready',
+      database: dbStatus,
+      timestamp: new Date().toISOString()
+    })
+  }
+})
 // mount routes
-app.use('/', userRoutes)
-app.use('/', authRoutes)
-app.use('/', postRoutes)
+app.use('/api/users', userRoutes)
+app.use('/api/auth', authRoutes)
+app.use('/api/posts', postRoutes)
 
 app.get('*', (req, res) => {
   const sheets = new ServerStyleSheets()
