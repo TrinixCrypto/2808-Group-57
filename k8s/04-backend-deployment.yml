@@ -17,7 +17,7 @@ spec:
       containers:
         - name: backend
           image: mern-backend:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           command: ["npm", "run", "development"]
           ports:
             - containerPort: 5000
@@ -26,5 +26,7 @@ spec:
               value: "--openssl-legacy-provider"
             - name: PORT
               value: "5000"
-            - name: MONGO_URL
-              value: "mongodb://mongo-service:27017/mernapp"
+            - name: MONGODB_URI
+              value: "mongodb://mongo-service:27017/mern-social"
+            - name: NODE_ENV
+              value: "production"
