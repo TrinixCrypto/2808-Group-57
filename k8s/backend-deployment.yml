@@ -17,7 +17,7 @@ spec:
       containers:
         - name: backend
           image: mern-backend:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           command: ["npm", "run", "development"]
           ports:
             - containerPort: 5000

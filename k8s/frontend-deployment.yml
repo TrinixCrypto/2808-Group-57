@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: react-frontend
-          imagePullPolicy: Never
+          image: react-frontend:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
           env:
