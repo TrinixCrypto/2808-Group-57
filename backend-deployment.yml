@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: mern-backend:latest
+          imagePullPolicy: Never
+          command: ["npm", "run", "development"]
+          ports:
+            - containerPort: 5000
+          env:
+            - name: NODE_OPTIONS
+              value: "--openssl-legacy-provider"
+            - name: PORT
+              value: "5000"
+            - name: MONGO_URL
+              value: "mongodb://mongo-service:27017/mernapp"
