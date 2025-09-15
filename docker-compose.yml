@@ -17,6 +17,8 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped
+    networks:
+      - mern-network
 
   mongo:
     image: mongo:6
@@ -26,15 +28,19 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    networks:
+      - mern-network
 
   frontend:
     build:
       context: .
       dockerfile: Dockerfile.frontend
     container_name: mern-frontend
-    ports:
-      - "3000:80"
+    expose:
+      - "80"
     restart: unless-stopped
+    networks:
+      - mern-network
 
   mongo-express:
     image: mongo-express:1.0.2-20
@@ -47,6 +53,8 @@ services:
     ports:
       - "8081:8081"
     restart: unless-stopped
+    networks:
+      - mern-network
 
   nginx:
     build: ./nginx
@@ -57,6 +65,12 @@ services:
       - frontend
       - backend
     restart: unless-stopped
+    networks:
+      - mern-network
 
 volumes:
   mongo_data:
+
+networks:
+  mern-network:
+    driver: bridge
